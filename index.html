@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise Interativa de Viés Algorítmico em IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Calm & Professional -->
+    <!-- Application Structure Plan: The SPA is designed as a narrative journey. It starts with a Hero section defining the core problem (algorithmic bias). It then presents an interactive "Case Study Explorer" as the main feature, allowing users to select and dynamically view details of the four cases (Amazon, COMPAS, Apple Card, Facial Recognition), promoting non-linear exploration. Contextual data, like the unemployment chart, is embedded within the relevant case study (Amazon). Following the cases, an interactive section explains the proposed "Ethical Frameworks" (FAIR/NIST). The page concludes with a clear summary of the final "Positioning & Recommendations". This structure was chosen to transform a linear report into an engaging, user-driven experience, allowing deep dives into specific areas of interest while maintaining a clear overall narrative from problem to solution. -->
+    <!-- Visualization & Content Choices: 1. Unemployment Data (from report) -> Goal: Compare -> Viz/Method: Bar Chart -> Interaction: Tooltips on hover showing exact data -> Justification: Best method to visually compare unemployment rates across genders and years, providing context for the Amazon case -> Library: Chart.js/Canvas. 2. Case Studies (Amazon, COMPAS, etc.) -> Goal: Organize & Inform -> Viz/Method: Interactive tabbed component -> Interaction: User clicks a case study button, and a content area is dynamically updated with its details (summary, bias type, impact) via Vanilla JS -> Justification: Breaks down extensive information into digestible, user-selectable chunks, preventing content overload and encouraging active exploration. 3. Ethical Frameworks (FAIR/NIST) -> Goal: Explain a concept -> Viz/Method: A 3-part interactive diagram (Fairness, Accountability, Transparency) -> Interaction: Clicking on each principle reveals its detailed explanation -> Justification: Simplifies complex framework concepts into a memorable and easily navigable format -> Method: HTML/CSS/JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .active-case-button {
+            background-color: #0d9488; /* teal-600 */
+            color: white;
+            transform: scale(1.05);
+        }
+        .content-fade-enter {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .content-fade-enter-active {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-teal-700">Ética em IA: Análise de Viés Algorítmico</h1>
+                <p class="text-sm text-slate-600">Um projeto da Universidade Cruzeiro do Sul</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-10">
+        <section id="hero" class="text-center py-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Quando a Inovação Encontra a Injustiça</h2>
+            <p class="max-w-3xl mx-auto text-lg text-slate-700">
+                A Inteligência Artificial promete um futuro otimizado, mas o que acontece quando seus algoritmos aprendem com os nossos preconceitos? Este projeto analisa criticamente o viés algorítmico — um desafio que transforma o potencial da IA em um mecanismo de exclusão — e propõe caminhos para um desenvolvimento tecnológico mais justo e responsável.
+            </p>
+        </section>
+
+        <section id="case-studies" class="mb-20">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold">Explorador de Casos de Estudo</h2>
+                <p class="mt-2 text-slate-600">Selecione um caso para analisar como o viés algorítmico se manifesta no mundo real.</p>
+            </div>
+            <div class="flex flex-col lg:flex-row gap-8">
+                <div id="case-buttons" class="flex lg:flex-col flex-wrap justify-center gap-3 lg:w-1/4">
+                </div>
+                <div id="case-content-display" class="bg-white p-8 rounded-lg shadow-lg flex-1 min-h-[400px]">
+                </div>
+            </div>
+        </section>
+
+        <section id="frameworks" class="bg-white p-8 rounded-lg shadow-lg mb-20">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold">Estruturas para uma IA Ética</h2>
+                <p class="mt-2 text-slate-600">Para combater o viés, precisamos de métodos estruturados. O framework FAIR, apoiado por diretrizes como as do NIST, oferece um caminho para avaliar e construir sistemas de IA mais justos.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="border-t-4 border-teal-500 pt-4">
+                    <h3 class="text-xl font-bold mb-2">1. Justiça (Fairness)</h3>
+                    <p class="text-slate-600">Avaliar se os critérios do algoritmo prejudicam grupos específicos. Exige a inclusão de métricas de equidade para medir e garantir a justiça do modelo em produção.</p>
+                </div>
+                <div class="border-t-4 border-amber-500 pt-4">
+                    <h3 class="text-xl font-bold mb-2">2. Responsabilidade (Accountability)</h3>
+                    <p class="text-slate-600">Definir claramente quem é o responsável pelo modelo e seus resultados. Implementar auditorias periódicas para garantir que o sistema não reproduza discriminações.</p>
+                </div>
+                <div class="border-t-4 border-sky-500 pt-4">
+                    <h3 class="text-xl font-bold mb-2">3. Transparência (Transparency)</h3>
+                    <p class="text-slate-600">Explicar como o algoritmo funciona, evitando o efeito "caixa-preta". É crucial documentar os dados de treino, as variáveis de influência e como os resultados são gerados.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="recommendations" class="text-center py-16">
+            <h2 class="text-3xl font-bold mb-4">Posicionamento e Recomendações Finais</h2>
+            <div class="flex flex-col md:flex-row gap-8 max-w-4xl mx-auto">
+                <div class="bg-white p-6 rounded-lg shadow-md flex-1">
+                    <h3 class="text-xl font-bold text-amber-600 mb-2">Sistemas de Médio Risco (RH, Finanças)</h3>
+                    <p class="text-slate-700 font-semibold mb-2">Ação: Redesenhar, Não Banir.</p>
+                    <ul class="text-left list-disc list-inside text-slate-600 space-y-1">
+                        <li>Realizar auditorias independentes de viés.</li>
+                        <li>Implementar critérios de explicabilidade para o usuário.</li>
+                        <li>Revisar e diversificar os dados de treinamento.</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md flex-1">
+                    <h3 class="text-xl font-bold text-red-600 mb-2">Sistemas de Alto Risco (Justiça, Segurança)</h3>
+                     <p class="text-slate-700 font-semibold mb-2">Ação: Suspender/Banir até garantir confiabilidade.</p>
+                     <ul class="text-left list-disc list-inside text-slate-600 space-y-1">
+                        <li>Proibir uso sem validação científica e auditoria contínua.</li>
+                        <li>Exigir supervisão humana obrigatória em decisões críticas.</li>
+                        <li>Regulamentar fortemente o uso de dados biométricos.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-white">
+        <div class="container mx-auto px-6 py-6 text-center text-sm">
+            <p><strong>Autores:</strong> Gustavo Pereira Farias, Inayara Araujo da Silva, Leandro Amaro da Silva</p>
+            <p class="text-slate-400 mt-2">&copy; 2025 | Projeto III - Universidade Cruzeiro do Sul</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const caseData = {
+        amazon: {
+            title: "Amazon: IA de Recrutamento",
+            content: `
+                <h3 class="text-2xl font-bold mb-4">Caso Amazon: Viés de Gênero no Recrutamento</h3>
+                <p class="mb-4 text-slate-600">Em 2014, a Amazon desenvolveu uma IA para automatizar a análise de currículos. Treinada com dados históricos de uma década, onde a maioria dos contratados eram homens, o sistema aprendeu a penalizar currículos que continham a palavra "mulheres", como em "capitã do time de xadrez feminino".</p>
+                <p class="mb-6 text-slate-600">Este caso clássico de <span class="font-semibold">viés de dados</span> evidencia como a automação pode amplificar desigualdades de gênero existentes, dificultando a inserção de mulheres no mercado de trabalho de tecnologia.</p>
+                <div class="bg-slate-100 p-4 rounded-lg">
+                    <h4 class="font-bold text-lg mb-2 text-center">Contexto: Taxa de Desemprego no Brasil por Gênero</h4>
+                    <p class="text-sm text-center text-slate-600 mb-4">A desigualdade que o algoritmo da Amazon reforçou é um reflexo de um problema social mais amplo, como mostram os dados sobre o desemprego no Brasil.</p>
+                    <div class="chart-container" style="position: relative; height:250px; width:100%; max-width: 500px; margin: auto;">
+                        <canvas id="unemploymentChart"></canvas>
+                    </div>
+                </div>
+            `
+        },
+        compas: {
+            title: "COMPAS: Justiça Criminal",
+            content: `
+                <h3 class="text-2xl font-bold mb-4">Caso COMPAS: Viés Racial na Justiça</h3>
+                <p class="mb-4 text-slate-600">O sistema COMPAS foi desenvolvido para prever a probabilidade de um réu cometer um novo crime. Uma investigação da ProPublica em 2016 revelou que o algoritmo era significativamente enviesado contra réus negros.</p>
+                <p class="mb-4 text-slate-600">Eles tinham quase o <span class="font-semibold">dobro de probabilidade</span> de serem incorretamente classificados como "alto risco" em comparação com réus brancos. Em contrapartida, réus brancos eram mais propensos a serem erroneamente classificados como "baixo risco".</p>
+                <p class="text-slate-600">Funcionando como uma <span class="font-semibold">"caixa-preta"</span>, o sistema automatizou e deu uma aparência de verdade científica à discriminação racial, ferindo princípios de transparência e do direito de defesa.</p>
+            `
+        },
+        apple: {
+            title: "Apple Card: Crédito",
+            content: `
+                <h3 class="text-2xl font-bold mb-4">Caso Apple Card: Viés de Gênero em Crédito</h3>
+                <p class="mb-4 text-slate-600">Em 2019, o recém-lançado Apple Card foi acusado de viés de gênero. Usuários, incluindo o co-fundador da Apple Steve Wozniak, relataram que homens recebiam limites de crédito até <span class="font-semibold">10 vezes maiores</span> que suas esposas, mesmo quando o casal compartilhava todos os bens e a esposa possuía um score de crédito superior.</p>
+                <p class="text-slate-600">O caso expôs como dados históricos de crédito, que refletem desigualdades salariais e de oportunidades do passado, podem treinar algoritmos para perpetuar a discriminação econômica contra as mulheres, criando barreiras de acesso ao crédito.</p>
+            `
+        },
+        bahia: {
+            title: "Reconhecimento Facial (BA)",
+            content: `
+                <h3 class="text-2xl font-bold mb-4">Caso Reconhecimento Facial: Viés Racial na Segurança</h3>
+                <p class="mb-4 text-slate-600">No Brasil, a implementação de sistemas de reconhecimento facial para segurança pública tem gerado controvérsias. Um dos casos mais graves ocorreu na Bahia, onde um vigilante negro passou <span class="font-semibold">26 dias preso injustamente</span> após ser incorretamente identificado pelo sistema.</p>
+                <p class="text-slate-600">Estudos demonstram que esses algoritmos possuem taxas de erro significativamente mais altas em pessoas negras, devido à sub-representação em bases de dados de treinamento. Sem regulação e supervisão humana eficaz, a tecnologia, em vez de combater o crime, pode se tornar uma ferramenta de violação de direitos fundamentais, aprofundando injustiças sociais.</p>
+            `
+        }
+    };
+
+    const buttonsContainer = document.getElementById('case-buttons');
+    const contentDisplay = document.getElementById('case-content-display');
+    let currentChart = null;
+    let activeButton = null;
+
+    function renderContent(key) {
+        const data = caseData[key];
+        contentDisplay.classList.add('content-fade-enter');
+        
+        setTimeout(() => {
+            contentDisplay.innerHTML = data.content;
+            if (key === 'amazon') {
+                renderChart();
+            }
+            contentDisplay.classList.remove('content-fade-enter');
+            contentDisplay.classList.add('content-fade-enter-active');
+            setTimeout(() => contentDisplay.classList.remove('content-fade-enter-active'), 500);
+        }, 100);
+    }
+    
+    function renderChart() {
+        const ctx = document.getElementById('unemploymentChart');
+        if (!ctx) return;
+        
+        if (currentChart) {
+            currentChart.destroy();
+        }
+
+        const unemploymentData = {
+            labels: ['2015', '2016', '2021', '2025 (proj.)'],
+            datasets: [
+                {
+                    label: 'Homens',
+                    data: [7.6, 10.7, 12.2, 5.1],
+                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Mulheres',
+                    data: [10.6, 13.0, 17.8, 7.6],
+                    backgroundColor: 'rgba(234, 179, 8, 0.7)',
+                    borderColor: 'rgba(234, 179, 8, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Geral',
+                    data: [8.9, 11.9, 14.7, 6.6],
+                    backgroundColor: 'rgba(13, 148, 136, 0.7)',
+                    borderColor: 'rgba(13, 148, 136, 1)',
+                    borderWidth: 1
+                }
+            ]
+        };
+
+        currentChart = new Chart(ctx, {
+            type: 'bar',
+            data: unemploymentData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Taxa (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                } else {
+                                  return label;
+                                }
+                            }
+                        }
+                    },
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    }
+
+    Object.keys(caseData).forEach(key => {
+        const button = document.createElement('button');
+        button.className = 'w-full text-left p-4 rounded-lg font-semibold bg-white shadow-md hover:bg-teal-100 transition-all duration-300';
+        button.textContent = caseData[key].title;
+        button.addEventListener('click', () => {
+            if (activeButton) {
+                activeButton.classList.remove('active-case-button');
+            }
+            button.classList.add('active-case-button');
+            activeButton = button;
+            renderContent(key);
+        });
+        buttonsContainer.appendChild(button);
+    });
+
+    const firstButton = buttonsContainer.querySelector('button');
+    if (firstButton) {
+        firstButton.click();
+    }
+});
+</script>
+
+</body>
+</html>
+
